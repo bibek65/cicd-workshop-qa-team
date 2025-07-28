@@ -5,8 +5,8 @@ on:
     workflows:
       - Frontend Deploy
     types:
-      - failure
-  # workflow_dispatch:
+      - completed
+  workflow_dispatch:
 
 jobs:
   e2e-tests:
