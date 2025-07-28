@@ -1,0 +1,46 @@
+name: E2E Tests
+
+on:
+  workflow_run:
+    workflows:
+      - Frontend Deploy
+    types:
+      - failure
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install E2E dependencies
+      working-directory: ./e2e-tests
+      run: npm install
+
+    - name: Run Cypress E2E tests
+      working-directory: ./e2e-tests
+      run: npm run cypress:run
+      env:
+        CYPRESS_BASE_URL: ${{ secrets.CYPRESS_BASE_URL }}
+        CYPRESS_API_URL: ${{ secrets.REACT_APP_API_URL }}
+
+  notify-success:
+    needs: e2e-tests
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+    - name: Notify deployment success
+      run: |
+        echo "🎉 All tests passed! Deployment is successful!"
+        echo "Frontend: Deployed to S3 + CloudFront"
+        echo "Backend: Deployed to EC2"
+        echo "E2E Tests: All scenarios passed"
