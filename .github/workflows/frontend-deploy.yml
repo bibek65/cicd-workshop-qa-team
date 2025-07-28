@@ -40,10 +40,10 @@ jobs:
     - name: Deploy to S3
       run: |
         if ! aws s3 sync frontend/build s3://${{ secrets.S3_BUCKET_NAME }} --delete; then
-            echo "❌ S3 sync failed "
+            echo "❌ S3 sync failed"
             exit 1
         fi
-        echo "✅ S3 sync completed successfully "
+        echo "✅ S3 sync completed successfully"
     
     - name: Invalidate CloudFront
       run: |
