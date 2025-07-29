@@ -2,8 +2,7 @@ name: Frontend Deploy
 
 on:
   push:
-    branches: [ main ]
-    paths: [ 'frontend/**', '.github/workflows/frontend-deploy.yml' ]
+    branches: [ team1-bibek ]
 
 jobs:
   deploy:
@@ -34,23 +33,16 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: us-east-1
 
     - name: Deploy to S3
       run: |
-        if ! aws s3 sync frontend/build s3://${{ secrets.S3_BUCKET_NAME }} --delete; then
-            echo "❌ S3 sync failed"
-            exit 1
-        fi
+        aws s3 sync frontend/build s3://${{ secrets.S3_BUCKET_NAME }} --delete
         echo "✅ S3 sync completed successfully"
     
     - name: Invalidate CloudFront
       run: |
         echo "Invalidating CloudFront distribution..."
-        if ! aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"; then
-          echo "❌ CloudFront invalidation failed"
-          exit 1
-        fi
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
         echo "✅ CloudFront invalidation completed successfully"
         echo "🎉 Frontend deployed successfully to S3 + CloudFront!"
