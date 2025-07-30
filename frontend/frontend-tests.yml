@@ -8,10 +8,12 @@ phases:
   pre_build:
     commands:
       - echo "Installing dependencies..."
-      - cd frontend
+      - cd e2e-tests
       - npm install
 
   build:
     commands:
-      - echo "Running all tests with coverage..."
-      - npm test
+      - echo "Running E2E tests..."
+      - echo "REACT_APP_API_URL=${REACT_APP_API_URL}" > .env
+      - echo "CYPRESS_BASE_URL=${CYPRESS_BASE_URL}" >> .env
+      - npm run cypress:run
