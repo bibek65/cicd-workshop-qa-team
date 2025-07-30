@@ -16,4 +16,5 @@ phases:
       - echo "Running E2E tests..."
       - echo "REACT_APP_API_URL=${REACT_APP_API_URL}" > .env
       - echo "CYPRESS_BASE_URL=${CYPRESS_BASE_URL}" >> .env
+      - cat .env
       - npm run cypress:run
